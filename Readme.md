@@ -1,12 +1,13 @@
 ## Activar entorno
 
-En directorio: fastapi_backend
+En directorio:
+
+```
 source .venv/bin/activate
+```
 
-## Ir al directorio del ejercicio
+## Para poner a correr el servidor
 
-Ej: (.venv) ➜ fastapi_backend cd u_01/u1_ej4/
-
-## Ejecutar servidor de desarrollo con Endpints
-
-(.venv) ➜ u1_ej4 python -m fastapi dev ej_4_1.py
+```
+python -m fastapi dev u1_ej_8_integrador/app/main.py
+```
