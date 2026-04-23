@@ -1,1 +1,6 @@
 fastapi[standard]
+pydantic
+sqlmodel
+psycopg2
+passlib 
+bcrypt<=4.0.1

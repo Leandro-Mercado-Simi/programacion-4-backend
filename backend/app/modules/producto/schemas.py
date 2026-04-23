@@ -1,35 +1,37 @@
-from pydantic import BaseModel, Field
+from sqlmodel import SQLModel
+from pydantic import Field
 from typing import Optional
 
 
-class ProductoBase(BaseModel):
-    nombre: str = Field(..., example="Silla de Oficina")
-    categoria: str = Field(..., pattern=r"^[A-Z]{3}-\d{2}$", example="MUE-01")
-    precio: float = Field(gt=0, example=150.50)
-    stock: int = Field(ge=0, example=20)
-    stock_minimo: int = Field(ge=0, example=5)
-    activo: bool = True
+class ProductCreate(SQLModel):
+    name: str = Field(..., max_length=100, example="Silla de Oficina")
+    category_id: int
+    price: float = Field(..., gt=0, example=150.50)
+    stock: int = Field(..., ge=0, example=20)
+    min_stock: int = Field(..., ge=0, example=5)
 
 
-class ProductoCreate(ProductoBase):
-    pass  # Exige todos los campos obligatorios de Base
-
-
-class ProductoUpdate(BaseModel):
+class ProductUpdate(SQLModel):
     # Opcional: Se usa si en el futuro se implementa PATCH (actualización parcial)
-    nombre: Optional[str] = None
-    categoria: Optional[str] = Field(None, pattern=r"^[A-Z]{3}-\d{2}$")
-    precio: Optional[float] = Field(None, gt=0)
+    name: Optional[str] = None
+    category_id: Optional[int] = None
+    price: Optional[float] = Field(None, gt=0)
     stock: Optional[int] = Field(None, ge=0)
-    stock_minimo: Optional[int] = Field(None, ge=0)
-    activo: Optional[bool] = None
+    min_stock: Optional[int] = Field(None, ge=0)
+    is_active: Optional[bool] = None
 
 
-class ProductoRead(ProductoBase):
-    id: int  # Contrato de salida: siempre incluye el ID generado
-
-
-class ProductoStockResponse(BaseModel):
+class ProductRead(SQLModel):
+    id: int
+    name: str
+    category_id: int
+    price: float
     stock: int
-    bajo_stock_minimo: bool
-    activo: bool
+    min_stock: int
+    is_active: bool
+
+
+class ProductStockResponse(SQLModel):
+    stock: int
+    below_min_stock: bool
+    is_active: bool

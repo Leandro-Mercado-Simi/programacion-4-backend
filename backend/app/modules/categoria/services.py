@@ -1,48 +1,93 @@
-from typing import List, Optional
-from .schemas import CategoriaCreate, CategoriaRead
-
-# Simulamos algunos registros iniciales
-db_categorias: List[CategoriaRead] = [
-    CategoriaRead(id=1, codigo="MUE-01", descripcion="Muebles de Oficina", activo=True),
-    CategoriaRead(id=2, codigo="ELE-02", descripcion="Electrónica", activo=True),
-]
-id_counter = 3
+from sqlmodel import Session, select
+from typing import List
+from .model import Category
+from .schemas import CategoryCreate, CategoryUpdate
 
 
-def crear(data: CategoriaCreate) -> CategoriaRead:
-    global id_counter
-    nueva = CategoriaRead(id=id_counter, **data.model_dump())
-    db_categorias.append(nueva)
-    id_counter += 1
-    return nueva
+# Método para crear y persistir categorías
+def service_create_category(
+    session: Session,
+    data: CategoryCreate,
+) -> Category:
+    category = Category.model_validate(data)
+
+    session.add(category)
+    session.commit()
+    session.refresh(category)
+
+    return category
 
 
-def obtener_todas(skip: int = 0, limit: int = 10) -> List[CategoriaRead]:
-    return db_categorias[skip : skip + limit]
+# Método para listar todas las categorías guardadas en la bd
+def service_get_all_categories(session: Session) -> List[Category]:
+    statement = select(Category).where(Category.is_active == True)
+
+    result = session.exec(statement)
+
+    return result.all()
 
 
-def obtener_por_id(id: int) -> Optional[CategoriaRead]:
-    for c in db_categorias:
-        if c.id == id:
-            return c
-    return None
+# Método para obtener una categoría por su id
+def service_get_category_by_id(session: Session, category_id: int) -> Category:
+    category = session.get(Category, category_id)
+
+    if not category:
+        raise ValueError("Categoría no encontrada")
+
+    return category
 
 
-def actualizar_total(id: int, data: CategoriaCreate) -> Optional[CategoriaRead]:
-    for index, c in enumerate(db_categorias):
-        if c.id == id:
-            actualizada = CategoriaRead(id=id, **data.model_dump())
-            db_categorias[index] = actualizada
-            return actualizada
-    return None
+# Método para actualizar una categoría
+def service_update_category(
+    session: Session, category_id: int, data: CategoryUpdate
+) -> Category:
+    category = session.get(Category, category_id)
+
+    if not category:
+        raise ValueError("Categoría no encontrada")
+
+    update_data = data.model_dump(exclude_unset=True)
+
+    for field, value in update_data.items():
+        setattr(category, field, value)
+
+    session.add(category)
+    session.commit()
+    session.refresh(category)
+
+    return category
 
 
-def desactivar(id: int) -> Optional[CategoriaRead]:
-    for index, c in enumerate(db_categorias):
-        if c.id == id:
-            c_dict = c.model_dump()
-            c_dict["activo"] = False
-            actualizada = CategoriaRead(**c_dict)
-            db_categorias[index] = actualizada
-            return actualizada
-    return None
+# Método para reemplazar una categoría
+def service_replace_category(
+    session: Session, category_id: int, data: CategoryCreate
+) -> Category:
+    category = session.get(Category, category_id)
+
+    if not category:
+        raise ValueError("Categoría no encontrada")
+
+    for field, value in data.model_dump().items():
+        setattr(category, field, value)
+
+    session.add(category)
+    session.commit()
+    session.refresh(category)
+
+    return category
+
+
+# Método para borrado lógico de una categoría
+def service_toggle_category_status(session: Session, category_id: int) -> Category:
+    category = session.get(Category, category_id)
+
+    if not category:
+        raise ValueError("Categoría no encontrada")
+
+    category.is_active = not category.is_active
+
+    session.add(category)
+    session.commit()
+    session.refresh(category)
+
+    return category

@@ -1,57 +1,87 @@
-from fastapi import APIRouter, HTTPException, Path, Query, status
+from fastapi import APIRouter, HTTPException, Path, status, Body, Depends
 from typing import List
-from . import schemas, services
+from .schemas import CategoryCreate, CategoryRead, CategoryUpdate
+from . import services
+from ...database.database import get_session
+from sqlmodel import Session
 
 router = APIRouter(prefix="/categorias", tags=["Categorías"])
 
 
-@router.post(
-    "/", response_model=schemas.CategoriaRead, status_code=status.HTTP_201_CREATED
-)
-def alta_categoria(categoria: schemas.CategoriaCreate):
-    return services.crear(categoria)
+# Ruta estática POST para crear una categoría
+@router.post("/", response_model=CategoryRead, status_code=status.HTTP_201_CREATED)
+def create_category(
+    category: CategoryCreate = Body(
+        ...,
+    ),
+    session: Session = Depends(get_session),
+):
+    try:
+        return services.service_create_category(session, category)
+    except ValueError as err:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(err))
 
 
-@router.get(
-    "/", response_model=List[schemas.CategoriaRead], status_code=status.HTTP_200_OK
-)
-def listar_categorias(skip: int = Query(0, ge=0), limit: int = Query(10, le=50)):
-    return services.obtener_todas(skip, limit)
+# Ruta estática GET Para obtener el listado de categorías
+@router.get("/", response_model=List[CategoryRead], status_code=status.HTTP_200_OK)
+def get_all_categories(session: Session = Depends(get_session)):
+    try:
+        return services.service_get_all_categories(session)
+    except ValueError as err:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err))
 
 
-@router.get(
-    "/{id}", response_model=schemas.CategoriaRead, status_code=status.HTTP_200_OK
-)
-def detalle_categoria(id: int = Path(..., gt=0)):
-    categoria = services.obtener_por_id(id)
-    if not categoria:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Categoría no encontrada"
-        )
-    return categoria
+# Ruta dinámica GET para obtener la información de una categoría por id
+@router.get("/{id}", response_model=CategoryRead, status_code=status.HTTP_200_OK)
+def get_category_by_id(
+    id: int = Path(..., gt=0), session: Session = Depends(get_session)
+):
+    try:
+        return services.service_get_category_by_id(session, id)
+    except ValueError as err:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err))
 
 
-@router.put(
-    "/{id}", response_model=schemas.CategoriaRead, status_code=status.HTTP_200_OK
-)
-def actualizar_categoria(categoria: schemas.CategoriaCreate, id: int = Path(..., gt=0)):
-    actualizada = services.actualizar_total(id, categoria)
-    if not actualizada:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Categoría no encontrada"
-        )
-    return actualizada
+# Ruta dinámica PUT para actualizar la totalidad de la data de una categoría
+@router.put("/{id}", response_model=CategoryRead, status_code=status.HTTP_200_OK)
+def replace_category(
+    id: int = Path(..., gt=0),
+    data: CategoryCreate = Body(
+        ...,
+    ),
+    session: Session = Depends(get_session),
+):
+    try:
+        return services.service_replace_category(session, id, data)
+    except ValueError as err:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err))
 
 
-@router.put(
+# Ruta dinámica PATCH para actualizar información parcial de una categoría
+@router.patch("/{id}", response_model=CategoryRead, status_code=status.HTTP_200_OK)
+def update_category(
+    id: int = Path(..., gt=0),
+    data: CategoryUpdate = Body(
+        ...,
+    ),
+    session: Session = Depends(get_session),
+):
+    try:
+        return services.service_update_category(session, id, data)
+    except ValueError as err:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err))
+
+
+# Ruta dinámica PATCH para manejar el borrado lógico de una categoría
+@router.patch(
     "/{id}/desactivar",
-    response_model=schemas.CategoriaRead,
+    response_model=CategoryRead,
     status_code=status.HTTP_200_OK,
 )
-def borrado_logico(id: int = Path(..., gt=0)):
-    desactivada = services.desactivar(id)
-    if not desactivada:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Categoría no encontrada"
-        )
-    return desactivada
+def change_category_status(
+    id: int = Path(..., gt=0), session: Session = Depends(get_session)
+):
+    try:
+        return services.service_toggle_category_status(session, id)
+    except ValueError as err:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err))

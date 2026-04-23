@@ -1,22 +1,22 @@
-from pydantic import BaseModel, Field
+from sqlmodel import SQLModel
+from pydantic import Field
 from typing import Optional
 
 
-class CategoriaBase(BaseModel):
-    codigo: str = Field(..., pattern=r"^[A-Z]{3}-\d{2}$", example="MUE-01")
-    descripcion: str = Field(..., min_length=3, example="Muebles de Oficina")
-    activo: bool = True
+class CategoryCreate(SQLModel):
+    code: str = Field(..., pattern=r"^[A-Z]{3}-\d{2}$", example="MUE-01")
+    description: str = Field(..., min_length=3, example="Muebles de Oficina")
+    is_active: bool = True
 
 
-class CategoriaCreate(CategoriaBase):
-    pass
+class CategoryUpdate(SQLModel):
+    code: Optional[str] = Field(None, pattern=r"^[A-Z]{3}-\d{2}$")
+    description: Optional[str] = Field(None, min_length=3)
+    is_active: Optional[bool] = None
 
 
-class CategoriaUpdate(BaseModel):
-    codigo: Optional[str] = Field(None, pattern=r"^[A-Z]{3}-\d{2}$")
-    descripcion: Optional[str] = Field(None, min_length=3)
-    activo: Optional[bool] = None
-
-
-class CategoriaRead(CategoriaBase):
+class CategoryRead(SQLModel):
     id: int
+    code: str
+    description: str
+    is_active: bool
