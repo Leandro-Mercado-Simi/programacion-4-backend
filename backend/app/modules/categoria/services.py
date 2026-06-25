@@ -1,26 +1,28 @@
 from sqlmodel import Session, select
 from typing import List
+from sqlalchemy.orm import selectinload
+
 from .model import Category
-from .schemas import CategoryCreate, CategoryUpdate
+from .schemas import CategoryCreate, CategoryUpdate, CategoryRead, CategoryReadFull
 
 
 # Método para crear y persistir categorías
-def service_create_category(
-    session: Session,
-    data: CategoryCreate,
-) -> Category:
+def service_create_category(session: Session, data: CategoryCreate) -> CategoryRead:
     category = Category.model_validate(data)
 
     session.add(category)
     session.commit()
     session.refresh(category)
 
-    return category
+    return CategoryRead.model_validate(category)
 
 
 # Método para listar todas las categorías guardadas en la bd
-def service_get_all_categories(session: Session) -> List[Category]:
-    statement = select(Category).where(Category.is_active == True)
+def service_get_all_categories(session: Session) -> List[CategoryReadFull]:
+    statement = (
+        select(Category)
+        .options(selectinload(Category.products))
+    )
 
     result = session.exec(statement)
 
@@ -28,8 +30,14 @@ def service_get_all_categories(session: Session) -> List[Category]:
 
 
 # Método para obtener una categoría por su id
-def service_get_category_by_id(session: Session, category_id: int) -> Category:
-    category = session.get(Category, category_id)
+def service_get_category_by_id(session: Session, category_id: int) -> CategoryReadFull:
+    statement = (
+        select(Category)
+        .where(Category.id == category_id)
+        .options(selectinload(Category.products))
+    )
+
+    category = session.exec(statement).first()
 
     if not category:
         raise ValueError("Categoría no encontrada")
@@ -40,7 +48,7 @@ def service_get_category_by_id(session: Session, category_id: int) -> Category:
 # Método para actualizar una categoría
 def service_update_category(
     session: Session, category_id: int, data: CategoryUpdate
-) -> Category:
+) -> CategoryRead:
     category = session.get(Category, category_id)
 
     if not category:
@@ -55,13 +63,13 @@ def service_update_category(
     session.commit()
     session.refresh(category)
 
-    return category
+    return CategoryRead.model_validate(category)
 
 
 # Método para reemplazar una categoría
 def service_replace_category(
     session: Session, category_id: int, data: CategoryCreate
-) -> Category:
+) -> CategoryRead:
     category = session.get(Category, category_id)
 
     if not category:
@@ -74,11 +82,11 @@ def service_replace_category(
     session.commit()
     session.refresh(category)
 
-    return category
+    return CategoryRead.model_validate(category)
 
 
 # Método para borrado lógico de una categoría
-def service_toggle_category_status(session: Session, category_id: int) -> Category:
+def service_toggle_category_status(session: Session, category_id: int) -> CategoryRead:
     category = session.get(Category, category_id)
 
     if not category:
@@ -90,4 +98,4 @@ def service_toggle_category_status(session: Session, category_id: int) -> Catego
     session.commit()
     session.refresh(category)
 
-    return category
+    return CategoryRead.model_validate(category)

@@ -1,0 +1,363 @@
+@import "tailwindcss";
+
+@theme {
+  /* ─── Primary ─── */
+  --color-primary-50: #f0fdfa;
+  --color-primary-100: #ccfbf1;
+  --color-primary-200: #99f6e4;
+  --color-primary-300: #5eead4;
+  --color-primary-400: #2dd4bf;
+  --color-primary-500: #14b8a6;
+  --color-primary-600: #0d9488;
+  --color-primary-700: #0f766e;
+  --color-primary-800: #115e59;
+  --color-primary-900: #134e4a;
+  --color-primary-950: #042f2e;
+
+  /* ─── Secondary ─── */
+  --color-secondary-50: #f5f3ff;
+  --color-secondary-100: #ede9fe;
+  --color-secondary-200: #ddd6ff;
+  --color-secondary-300: #c4b4ff;
+  --color-secondary-400: #a684ff;
+  --color-secondary-500: #8e51ff;
+  --color-secondary-600: #7f22fe;
+  --color-secondary-700: #7008e7;
+  --color-secondary-800: #5d0ec0;
+  --color-secondary-900: #4d179a;
+  --color-secondary-950: #2f0d68;
+
+  /* ─── Success ─── */
+  --color-success-50: #f0fdf4;
+  --color-success-100: #dcfce7;
+  --color-success-200: #bbf7d0;
+  --color-success-300: #86efac;
+  --color-success-400: #4ade80;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+  --color-success-800: #166534;
+  --color-success-900: #14532d;
+
+  /* ─── Danger ─── */
+  --color-danger-50: #fff1f1;
+  --color-danger-100: #ffe0e0;
+  --color-danger-200: #ffc6c6;
+  --color-danger-300: #ff9d9d;
+  --color-danger-400: #ff6464;
+  --color-danger-500: #f83535;
+  --color-danger-600: #e01414;
+  --color-danger-700: #bc0d0d;
+  --color-danger-800: #9b0f0f;
+  --color-danger-900: #801414;
+
+  /* ─── Warning ─── */
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
+
+  /* ─── Info ─── */
+  --color-info-50: #f8fafc;
+  --color-info-100: #f1f5f9;
+  --color-info-200: #e2e8f0;
+  --color-info-300: #cbd5e1;
+  --color-info-400: #94a3b8;
+  --color-info-500: #64748b;
+  --color-info-600: #475569;
+  --color-info-700: #334155;
+  --color-info-800: #1e293b;
+  --color-info-900: #0f172a;
+
+  /* ─── Neutral ─── */
+  --color-neutral-50: #fafafa;
+  --color-neutral-100: #f4f4f5;
+  --color-neutral-200: #e4e4e7;
+  --color-neutral-300: #d4d4d8;
+  --color-neutral-400: #a1a1aa;
+  --color-neutral-500: #71717a;
+  --color-neutral-600: #52525b;
+  --color-neutral-700: #3f3f46;
+  --color-neutral-800: #27272a;
+  --color-neutral-900: #18181b;
+  --color-neutral-950: #09090b;
+
+  /* ─── Text ─── */
+  --color-text-primary: #09090b;
+  --color-text-secondary: #71717a; /* zinc-500 */
+  --color-text-disabled: #fafafa; /* zinc-50  */
+  --color-text-inverse: #a1a1aa; /* zinc-400 */
+
+  /* ─── Background ─── */
+  --color-background-primary: #f9fafb; /* gray-50  */
+  --color-background-secondary: #f3f4f6; /* gray-100 */
+  --color-background-elevated: #e5e7eb; /* gray-200 */
+  --color-background-inverse: #1f2937; /* gray-800 */
+  --color-background-inverse-secondary: #111827; /* gray-900 */
+  --color-background-inverse-elevated: #030712; /* gray-950 */
+
+  /* ─── Typography ─── */
+  --font-sans: Inter, system-ui, sans-serif;
+
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 2rem;
+
+  /* ─── Spacing ─── */
+  --spacing-18: 4.5rem;
+  --spacing-22: 5.5rem;
+  --spacing-72: 18rem;
+  --spacing-84: 21rem;
+  --spacing-96: 24rem;
+
+  /* ─── Border radius ─── */
+  --radius-card: 0.75rem;
+  --radius-modal: 1rem;
+
+  /* ─── Shadows ─── */
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.08);
+  --shadow-modal: 0 20px 60px -10px rgb(0 0 0 / 0.2);
+  --shadow-input: 0 0 0 3px rgb(227 90 40 / 0.15);
+
+  /* ─── Shadows (gray como base, multi-capa suave al estilo MUI) ─── */
+  --shadow-xs: 0 1px 2px 0 rgb(107 114 128 / 0.06);
+  --shadow-sm: 0 1px 3px 0 rgb(107 114 128 / 0.1), 0 1px 2px -1px rgb(107 114 128 / 0.08);
+  --shadow-card:
+    0 2px 4px -1px rgb(107 114 128 / 0.08), 0 4px 6px -1px rgb(107 114 128 / 0.06);
+  --shadow-md: 0 4px 8px -2px rgb(107 114 128 / 0.1), 0 2px 4px -2px rgb(107 114 128 / 0.06);
+  --shadow-lg: 0 10px 20px -4px rgb(107 114 128 / 0.1), 0 4px 8px -4px rgb(107 114 128 / 0.06);
+  --shadow-modal:
+    0 24px 48px -8px rgb(107 114 128 / 0.18), 0 8px 16px -6px rgb(107 114 128 / 0.1);
+
+  /* ─── Focus ring (teal, para inputs y elementos interactivos) ─── */
+  --shadow-input-focus: 0 0 0 3px rgb(20 184 166 / 0.2);
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.loader {
+  --c1: theme("colors.neutral.950");
+  --c2: theme("colors.secondary.700");
+  width: 40px;
+  height: 80px;
+  border-top: 4px solid var(--c1);
+  border-bottom: 4px solid var(--c1);
+  background: linear-gradient(90deg, var(--c1) 2px, var(--c2) 0 5px, var(--c1) 0) 50%/7px 8px
+    no-repeat;
+  display: grid;
+  overflow: hidden;
+  animation: l5-0 2s infinite linear;
+}
+
+.loader::before,
+.loader::after {
+  content: "";
+  grid-area: 1/1;
+  width: 75%;
+  height: calc(50% - 4px);
+  margin: 0 auto;
+  border: 2px solid var(--c1);
+  border-top: 0;
+  box-sizing: content-box;
+  border-radius: 0 0 40% 40%;
+  mask:
+    linear-gradient(#000 0 0) bottom/4px 2px no-repeat,
+    linear-gradient(#000 0 0);
+  -webkit-mask:
+    linear-gradient(#000 0 0) bottom/4px 2px no-repeat,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+  background:
+    linear-gradient(var(--d, 0deg), var(--c2) 50%, #0000 0) bottom / 100% 205%,
+    linear-gradient(var(--c2) 0 0) center/0 100%;
+  background-repeat: no-repeat;
+  animation: inherit;
+  animation-name: l5-1;
+}
+
+.loader::after {
+  transform-origin: 50% calc(100% + 2px);
+  transform: scaleY(-1);
+  --s: 3px;
+  --d: 180deg;
+}
+
+@keyframes l5-0 {
+  80% {
+    transform: rotate(0);
+  }
+
+  100% {
+    transform: rotate(0.5turn);
+  }
+}
+
+@keyframes l5-1 {
+  10%,
+  70% {
+    background-size:
+      100% 205%,
+      var(--s, 0) 100%;
+  }
+
+  70%,
+  100% {
+    background-position: top, center;
+  }
+}
+
+.field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.field-toggle {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  border: none;
+  background: transparent;
+}
+
+.field::after {
+  content: "";
+  position: absolute;
+  bottom: 0%;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: theme("colors.primary.500");
+  transition:
+    width 0.2s,
+    left 0.2s;
+}
+
+.field:focus-within::after {
+  width: 100%;
+  left: 0;
+}
+
+.field-input {
+  padding: 22px 0px 6px 0px;
+  border: none;
+  border-bottom: 1.5px solid theme("colors.neutral.950");
+  border-radius: 0;
+  background: transparent;
+  font-size: 0.875rem;
+  color: theme("colors.text-primary");
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.field-input:focus {
+  border-bottom: 1.5px solid theme("colors.neutral.950");
+  box-shadow: none;
+}
+
+.field-input:disabled {
+  background: theme("colors.neutral.100");
+  color: theme("colors.text.disabled");
+  cursor: not-allowed;
+}
+
+.field-label {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  transform-origin: left top;
+  font-size: 0.875rem;
+  color: theme("colors.text-primary");
+  pointer-events: none;
+  transition:
+    transform 0.2s,
+    color 0.2s;
+}
+
+.field-input:focus ~ .field-label,
+.field-input:not(:placeholder-shown) ~ .field-label {
+  transform: translateY(-28px) scale(0.78);
+  color: theme("colors.primary.500");
+}
+
+.field-error .field-input {
+  border-color: theme("colors.danger.500");
+}
+
+.field-error .field-input:focus {
+  box-shadow: 0 0 0 3px theme("colors.danger.500");
+}
+
+.field-error .field-input:focus ~ .field-label,
+.field-error .field-input:not(:placeholder-shown) ~ .field-label {
+  color: theme("colors.danger.500");
+}
+
+.field-select {
+  cursor: pointer;
+  appearance: none;
+}
+
+.field-select-arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: theme("colors.text.secondary");
+  font-size: 14px;
+}
+
+.field-msg {
+  font-size: 0.75rem;
+  margin-top: 4px;
+}
+
+.field-msg--error {
+  color: theme("colors.danger.500");
+}
+.field-msg--hint {
+  color: theme("colors.text.primary");
+}
+
+.field-pw-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: theme("colors.text.primary");
+  display: flex;
+  align-items: center;
+  padding: 4px;
+}
+
+.field-pw-toggle:hover {
+  color: theme("colors.primary.500");
+}

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Path, status, Body, Depends
 from typing import List
 from . import schemas, services
-from ...database.database import get_session
+from ...core.database import get_session
 from sqlmodel import Session
 
 

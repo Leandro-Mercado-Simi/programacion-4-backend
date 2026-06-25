@@ -1,0 +1,71 @@
+@base_url = http://localhost:8000
+
+### ---- Productos --------------------------------------
+
+### Listar productos
+GET {{base_url}}/productos
+Content-Type: application/json
+
+### Get producto por id
+GET {{base_url}}/productos/1
+Content-Type: application/json
+
+### Consultar stock de un producto
+GET {{base_url}}/productos/1/stock
+Content-Type: application/json
+
+### Crear producto
+POST {{base_url}}/productos
+Content-Type: application/json
+
+{
+  "name": "Pizza Muzzarella",
+  "description": "Pizza con tomate y mozzarella",
+  "base_price": 15000.00,
+  "images_url": ["https://example.com/pizza.jpg"],
+  "stock": 20,
+  "min_stock": 5,
+  "available": true
+}
+
+### Reemplazar producto (PUT)
+PUT {{base_url}}/productos/2
+Content-Type: application/json
+
+{
+  "name": "Pizza Especial Actualizada",
+  "description": "Pizza con tomate, mozzarella y albahaca",
+  "base_price": 18000.00,
+  "images_url": ["https://example.com/pizza-updated.jpg"],
+  "stock": 15,
+  "min_stock": 3,
+  "available": true
+}
+
+### Actualizar producto parcialmente (PATCH)
+PATCH {{base_url}}/productos/2
+Content-Type: application/json
+
+{
+  "base_price": 20000.00,
+  "stock": 30
+}
+
+### Desactivar o activar producto (borrado lógico)
+PATCH {{base_url}}/productos/2/desactivar
+Content-Type: application/json
+
+
+### ---- Productos - Categoria --------------------------------------
+
+### Asignar categoría a producto
+POST {{base_url}}/productos/2/categorias/2
+Content-Type: application/json
+
+### Obtener categorías de un producto
+GET {{base_url}}/productos/2/categorias
+Content-Type: application/json
+
+### Desvincular categoría de producto
+DELETE {{base_url}}/productos/2/categorias/2
+Content-Type: application/json

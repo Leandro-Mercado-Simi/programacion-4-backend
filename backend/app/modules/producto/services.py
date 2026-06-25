@@ -1,23 +1,35 @@
 from sqlmodel import Session, select
-from .model import Product
 from typing import List
-from .schemas import ProductCreate, ProductUpdate, ProductStockResponse
+from sqlalchemy.orm import selectinload
+
+from .model import Product
+from .schemas import (
+    ProductCreate,
+    ProductUpdate,
+    ProductRead,
+    ProductReadFull,
+    ProductStockResponse,
+)
 
 
 # Método para persistir un nuevo producto
-def service_create_product(session: Session, data: ProductCreate) -> Product:
+def service_create_product(session: Session, data: ProductCreate) -> ProductRead:
     product = Product.model_validate(data)
 
     session.add(product)
     session.commit()
     session.refresh(product)
 
-    return product
+    return ProductRead.model_validate(product)
 
 
-# Método para listar todos los productos en los que is_active == True
-def service_get_all_products(session: Session) -> List[Product]:
-    statement = select(Product).where(Product.is_active == True)
+# Método para listar todos los productos disponibles
+def service_get_all_products(session: Session) -> List[ProductReadFull]:
+    statement = (
+        select(Product)
+        .where(Product.available == True)
+        .options(selectinload(Product.categories))
+    )
 
     result = session.exec(statement)
 
@@ -25,8 +37,14 @@ def service_get_all_products(session: Session) -> List[Product]:
 
 
 # Método para obtener un producto por id
-def service_get_product_by_id(session: Session, prod_id: int) -> Product:
-    product = session.get(Product, prod_id)
+def service_get_product_by_id(session: Session, prod_id: int) -> ProductReadFull:
+    statement = (
+        select(Product)
+        .where(Product.id == prod_id)
+        .options(selectinload(Product.categories))
+    )
+
+    product = session.exec(statement).first()
 
     if not product:
         raise ValueError("Producto no encontrado")
@@ -37,7 +55,7 @@ def service_get_product_by_id(session: Session, prod_id: int) -> Product:
 # Método para actualizar el total de un producto
 def service_replace_product(
     session: Session, prod_id: int, data: ProductCreate
-) -> Product:
+) -> ProductRead:
     product = session.get(Product, prod_id)
 
     if not product:
@@ -50,13 +68,13 @@ def service_replace_product(
     session.commit()
     session.refresh(product)
 
-    return product
+    return ProductRead.model_validate(product)
 
 
 # Método para actualizar parcialmente un producto
 def service_update_product(
     session: Session, prod_id: int, data: ProductUpdate
-) -> Product:
+) -> ProductRead:
     product = session.get(Product, prod_id)
 
     if not product:
@@ -71,23 +89,23 @@ def service_update_product(
     session.commit()
     session.refresh(product)
 
-    return product
+    return ProductRead.model_validate(product)
 
 
 # Método para manejar el borrado lógico
-def service_toggle_product_status(session: Session, prod_id: int) -> Product:
+def service_toggle_product_status(session: Session, prod_id: int) -> ProductRead:
     product = session.get(Product, prod_id)
 
     if not product:
         raise ValueError("Producto no encontrado")
 
-    product.is_active = not product.is_active
+    product.available = not product.available
 
     session.add(product)
     session.commit()
     session.refresh(product)
 
-    return product
+    return ProductRead.model_validate(product)
 
 
 # Método para obtener el estado del stock de un producto
@@ -102,5 +120,5 @@ def service_get_stock_status(session: Session, prod_id: int) -> ProductStockResp
     return ProductStockResponse(
         stock=product.stock,
         below_min_stock=stock_alert,
-        is_active=product.is_active,
+        available=product.available,
     )

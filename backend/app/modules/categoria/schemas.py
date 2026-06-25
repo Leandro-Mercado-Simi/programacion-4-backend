@@ -1,22 +1,34 @@
+from typing import List, Optional
+from decimal import Decimal
 from sqlmodel import SQLModel
-from pydantic import Field
-from typing import Optional
 
 
-class CategoryCreate(SQLModel):
-    code: str = Field(..., pattern=r"^[A-Z]{3}-\d{2}$", example="MUE-01")
-    description: str = Field(..., min_length=3, example="Muebles de Oficina")
+class CategoryBase(SQLModel):
+    name: str
+    description: str
     is_active: bool = True
 
 
+class CategoryCreate(CategoryBase):
+    pass
+
+
 class CategoryUpdate(SQLModel):
-    code: Optional[str] = Field(None, pattern=r"^[A-Z]{3}-\d{2}$")
-    description: Optional[str] = Field(None, min_length=3)
+    name: Optional[str] = None
+    description: Optional[str] = None
     is_active: Optional[bool] = None
 
 
-class CategoryRead(SQLModel):
+class CategoryRead(CategoryBase):
     id: int
-    code: str
-    description: str
-    is_active: bool
+
+
+class ProductBasicRead(SQLModel):
+    id: int
+    name: str
+    base_price: Decimal
+    available: bool
+
+
+class CategoryReadFull(CategoryRead):
+    products: List[ProductBasicRead] = []
