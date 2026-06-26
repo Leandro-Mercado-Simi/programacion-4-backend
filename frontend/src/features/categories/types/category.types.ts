@@ -27,3 +27,8 @@ export type ProductBasic = {
 export type CategoryReadFull = CategoryRead & {
   products: ProductBasic[];
 };
+
+export type PaginatedResponse<T> = {
+  total: number;
+  items: T[];
+};

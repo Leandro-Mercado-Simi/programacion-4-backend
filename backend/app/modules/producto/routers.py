@@ -1,5 +1,5 @@
-from fastapi import APIRouter, HTTPException, Path, status, Body, Depends
-from typing import List
+from fastapi import APIRouter, HTTPException, Path, Query, status, Body, Depends
+from typing import Optional
 from sqlmodel import Session
 
 from .schemas import (
@@ -8,6 +8,7 @@ from .schemas import (
     ProductUpdate,
     ProductStockResponse,
     ProductReadFull,
+    ProductPaginatedResponse,
 )
 from . import services
 from app.modules.producto_categoria import services as pc_services
@@ -26,10 +27,21 @@ def create_product(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(err))
 
 
-@router.get("/", response_model=List[ProductReadFull], status_code=status.HTTP_200_OK)
-def get_all_products(session: Session = Depends(get_session)):
+@router.get(
+    "/", response_model=ProductPaginatedResponse, status_code=status.HTTP_200_OK
+)
+def get_all_products(
+    session: Session = Depends(get_session),
+    offset: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
+    name: Optional[str] = Query(None),
+    available: Optional[bool] = Query(None),
+):
     try:
-        return services.service_get_all_products(session)
+        total, items = services.service_get_all_products(
+            session, offset, limit, name, available
+        )
+        return ProductPaginatedResponse(total=total, items=items)
     except ValueError as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err))
 

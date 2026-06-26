@@ -1,4 +1,6 @@
 from sqlmodel import Relationship, SQLModel, Field
+from sqlalchemy import Column, DateTime
+from datetime import datetime, timezone
 from typing import Optional, List, TYPE_CHECKING
 
 from app.modules.producto_categoria.model import ProductCategoryLink
@@ -19,4 +21,18 @@ class Category(SQLModel, table=True):
     products: List["Product"] = Relationship(
         back_populates="categories",
         link_model=ProductCategoryLink,
+    )
+
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column=Column(DateTime(timezone=True), nullable=False),
+    )
+    updated_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
+        sa_column=Column(DateTime(timezone=True), nullable=False),
+    )
+
+    deleted_at: Optional[datetime] = Field(
+        default=None,
+        sa_column=Column(DateTime(timezone=True), nullable=True),
     )

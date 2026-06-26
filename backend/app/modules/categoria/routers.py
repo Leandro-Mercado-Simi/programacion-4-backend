@@ -1,8 +1,14 @@
-from fastapi import APIRouter, HTTPException, Path, status, Body, Depends
-from typing import List
+from fastapi import APIRouter, HTTPException, Path, Query, status, Body, Depends
+from typing import Optional
 from sqlmodel import Session
 
-from .schemas import CategoryCreate, CategoryRead, CategoryUpdate, CategoryReadFull
+from .schemas import (
+    CategoryCreate,
+    CategoryRead,
+    CategoryUpdate,
+    CategoryReadFull,
+    CategoryPaginatedResponse,
+)
 from . import services
 from app.modules.producto_categoria import services as pc_services
 from app.core.database import get_session
@@ -23,10 +29,21 @@ def create_category(
 
 
 # Ruta estática GET Para obtener el listado de categorías
-@router.get("/", response_model=List[CategoryReadFull], status_code=status.HTTP_200_OK)
-def get_all_categories(session: Session = Depends(get_session)):
+@router.get(
+    "/", response_model=CategoryPaginatedResponse, status_code=status.HTTP_200_OK
+)
+def get_all_categories(
+    session: Session = Depends(get_session),
+    offset: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
+    name: Optional[str] = Query(None),
+    is_active: Optional[bool] = Query(None),
+):
     try:
-        return services.service_get_all_categories(session)
+        total, items = services.service_get_all_categories(
+            session, offset, limit, name, is_active
+        )
+        return CategoryPaginatedResponse(total=total, items=items)
     except ValueError as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err))
 

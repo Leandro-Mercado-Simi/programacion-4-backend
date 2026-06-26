@@ -1,5 +1,6 @@
 from typing import List, Optional
 from decimal import Decimal
+from datetime import datetime
 from sqlmodel import SQLModel
 
 
@@ -29,6 +30,9 @@ class ProductUpdate(SQLModel):
 
 class ProductRead(ProductBase):
     id: int
+    created_at: datetime
+    updated_at: datetime
+    deleted_at: Optional[datetime] = None
 
 
 class CategoryBasicRead(SQLModel):
@@ -45,3 +49,8 @@ class ProductStockResponse(SQLModel):
     stock: int
     below_min_stock: bool
     available: bool
+
+
+class ProductPaginatedResponse(SQLModel):
+    total: int
+    items: List[ProductReadFull]
